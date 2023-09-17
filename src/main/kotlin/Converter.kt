@@ -124,7 +124,7 @@ object Converter {
         }
 
         var output = ""
-        dependencies.forEach { output += it + '\n' }
+        plugins.forEach { output += it + '\n' }
 
         return output
     }
