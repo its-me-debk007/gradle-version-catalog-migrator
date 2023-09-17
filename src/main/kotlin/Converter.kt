@@ -13,10 +13,10 @@ object Converter {
     private val dependencies = mutableListOf<String>()
 
     init {
-        val file = File("./outputs/$FILE_NAME")
-        if (!file.exists()) {
-            file.mkdir()
-//            file.createNewFile()
+        File("output").mkdir()
+
+        File("./output/$FILE_NAME").let {
+            if (!it.exists()) it.createNewFile()
         }
 
 //        file.writeText("$VERSIONS\n")

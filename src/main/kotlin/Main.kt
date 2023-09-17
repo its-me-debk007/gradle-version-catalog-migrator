@@ -90,7 +90,7 @@ fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
         title = "Gradle Version Catalog Converter",
-        state = WindowState(size = DpSize(524.dp, 700.dp)),
+        state = WindowState(size = DpSize(750.dp, 700.dp)),
     ) {
         App()
     }
