@@ -10,4 +10,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "Dependency_Converter"
+rootProject.name = "Gradle Version Catalog Migrator"

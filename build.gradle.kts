@@ -27,8 +27,8 @@ compose.desktop {
         mainClass = "MainKt"
 
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "Dependency_Converter"
+            targetFormats(TargetFormat.Dmg, TargetFormat.Deb, TargetFormat.Rpm, TargetFormat.Exe)
+            packageName = "Gradle Version Catalog Migrator"
             packageVersion = "1.0.0"
         }
     }
