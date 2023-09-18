@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import theme.PurpleBlue
+import theme.TextFieldBackground
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 
@@ -36,7 +37,8 @@ fun CustomTextField(
         colors = TextFieldDefaults.textFieldColors(
             textColor = Color.White,
             placeholderColor = Color.White.copy(alpha = 0.4f),
-            focusedIndicatorColor = if (focusable) PurpleBlue else Color.Transparent
+            focusedIndicatorColor = if (focusable) PurpleBlue else Color.Transparent,
+            backgroundColor = TextFieldBackground
         ),
         readOnly = readOnly,
         modifier = Modifier.height(280.dp).width(378.dp)
