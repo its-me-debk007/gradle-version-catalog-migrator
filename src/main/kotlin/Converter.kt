@@ -35,6 +35,10 @@ object Converter {
     }
 
     fun convertDependencies(inputString: String): String {
+        dependencies.clear()
+//        versions.clear()
+        libraries.clear()
+
         val inputList = inputString.split('\n')
 
         for (it in inputList) {
@@ -90,6 +94,7 @@ object Converter {
     }
 
     fun convertPlugins(inputString: String): String {
+        plugins.clear()
         val inputList = inputString.split('\n')
 
         for (it in inputList) {
