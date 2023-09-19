@@ -1,24 +1,10 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.window.WindowDraggableArea
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,10 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.WindowPosition
-import androidx.compose.ui.window.WindowState
-import androidx.compose.ui.window.application
+import androidx.compose.ui.window.*
 import component.CopyButton
 import component.CustomTextField
 import theme.Background
@@ -85,8 +68,10 @@ fun App() {
                 Button(
                     onClick = {
                         outputDependencyText =
-                            Converter.convertDependencies(inputDependencyText.trim())
-                        outputPluginText = Converter.convertPlugins(inputPluginText.trim())
+                            GradleCatalogUtils.convertDependencies(inputDependencyText.trim())
+                        outputPluginText = GradleCatalogUtils.convertPlugins(inputPluginText.trim())
+
+                        GradleCatalogUtils.setupToml()
                     },
                     colors = ButtonDefaults.buttonColors(disabledBackgroundColor = Color.DarkGray),
                     shape = RoundedCornerShape(12.dp),
@@ -127,6 +112,13 @@ fun App() {
     }
 }
 
+@Composable
+private fun WindowScope.AppWindowTitleBar() = WindowDraggableArea {
+    Row (Modifier.fillMaxWidth().height(48.dp).background(Background)) {
+//        Text()
+    }
+}
+
 fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
@@ -136,8 +128,12 @@ fun main() = application {
             height = 800.dp,
             position = WindowPosition(Alignment.Center)
         ),
-        resizable = false
+//        resizable = false,
+        undecorated = true
     ) {
-        App()
+        Column(Modifier.fillMaxSize()) {
+            AppWindowTitleBar()
+            App()
+        }
     }
 }
