@@ -1,7 +1,4 @@
-import util.FILE_NAME
-import util.LIBRARIES
-import util.PLUGINS
-import util.VERSIONS
+import util.*
 import java.io.File
 
 object GradleCatalogUtils {
@@ -40,13 +37,10 @@ object GradleCatalogUtils {
             val statement = "$name = { id = \"$id\", version.ref = \"$name\" }"
             file.appendText(statement + '\n')
         }
-
-//        plugins.forEach { file.appendText(it + '\n') }
     }
 
     fun convertDependencies(inputString: String): String {
         dependenciesOutput.clear()
-//        versions.clear()
         libraries.clear()
 
         val inputList = inputString.split('\n')
@@ -85,6 +79,7 @@ object GradleCatalogUtils {
 
             } catch (e: Exception) {
                 println("ERROR: ${e.message}")
+                return INVALID_SYNTAX
             }
         }
 
@@ -122,6 +117,7 @@ object GradleCatalogUtils {
 
             } catch (e: Exception) {
                 println("ERROR: ${e.message}")
+                return INVALID_SYNTAX
             }
         }
 

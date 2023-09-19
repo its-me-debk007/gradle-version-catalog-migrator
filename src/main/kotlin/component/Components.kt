@@ -5,6 +5,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
@@ -49,9 +50,10 @@ fun CopyButton(text: String) {
         enabled = text.isNotBlank(),
         colors = ButtonDefaults.buttonColors(disabledBackgroundColor = Color.DarkGray),
         contentPadding = PaddingValues(vertical = 4.dp, horizontal = 6.dp),
-        shape = RoundedCornerShape(4.dp),
-        modifier = Modifier.padding(end = 6.dp)
+        shape = RoundedCornerShape(6.dp),
+        modifier = Modifier.padding(end = 8.dp)
             .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
+            .alpha(0.75f)
     ) {
         Text("COPY", fontSize = 12.sp, letterSpacing = (0.3).sp)
     }
