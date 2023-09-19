@@ -53,7 +53,7 @@ fun CopyButton(text: String) {
         shape = RoundedCornerShape(6.dp),
         modifier = Modifier.padding(end = 8.dp)
             .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
-            .alpha(0.75f)
+            .alpha(0.9f)
     ) {
         Text("COPY", fontSize = 12.sp, letterSpacing = (0.3).sp)
     }
