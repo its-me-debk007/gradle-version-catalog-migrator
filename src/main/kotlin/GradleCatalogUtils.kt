@@ -1,12 +1,11 @@
+import util.FILE_NAME
+import util.LIBRARIES
+import util.PLUGINS
+import util.VERSIONS
 import java.io.File
 
 object GradleCatalogUtils {
     private lateinit var file: File
-
-    private const val FILE_NAME = "libs.versions.toml"
-    private const val LIBRARIES = "[libraries]"
-    private const val VERSIONS = "[versions]"
-    private const val PLUGINS = "[plugins]"
 
     private val libraries = hashMapOf<String, Pair<String, String>>()
     private val versions = hashMapOf<String, String>()
