@@ -13,7 +13,8 @@ efficiency across major desktop platforms.
 
 ## Working 💻
 
-![Working Sample]("media/working_sample.mp4")
+https://github.com/its-me-debk007/gradle-version-catalog-migrator/assets/81604986/0da5dc77-0282-4ba2-9bd1-4b9317ef5fae
+
 - Just copy-paste your dependencies & plugins
 - `libs.versions.toml` file will be generated inside the output folder
 - Paste the generated dependencies & plugins to their respected files
@@ -33,11 +34,16 @@ efficiency across major desktop platforms.
 
 ## Contributing 🤝
 
-Join us in shaping the future of this project – your contributions are invaluable! Feel free to open a issue or submit a
-pull request for any bugs/improvements.
+Join us in shaping the future of this project – your contributions are invaluable!
+
+- **Fork the repository** and create a new branch for your feature or bug fix
+- Make your changes and ensure that the code follows the project's coding standards
+- Write tests to cover your changes and ensure that existing tests pass
+- Submit a **pull request**, explaining the changes and the problem it addresses
+- A project maintainer will review your pull request, and upon approval, it will be merged into the main branch
 
 ## License 📜
 
 Distributed under the MIT License. See `LICENSE` file for more information.
 
-#### 🌟 <u>If you find value in this project, please consider starring it! Your support keeps it thriving</u> 🚀
+### 🌟 If you find value in this project, please consider starring it! Your support keeps it thriving 🚀
