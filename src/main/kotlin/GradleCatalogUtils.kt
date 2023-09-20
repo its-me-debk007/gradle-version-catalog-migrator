@@ -123,7 +123,7 @@ object GradleCatalogUtils {
 
         val outputBuilder = StringBuilder()
         pluginsOutput.forEach { outputBuilder.append(it + '\n') }
-        outputBuilder.append("\n/* Add the following line to top of root level build.gradle.kts to prevent errors:\n@Suppress(\"DSL_SCOPE_VIOLATION\")\n/*")
+        outputBuilder.append(COMMENT)
 
         return outputBuilder.toString()
     }
