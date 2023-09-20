@@ -83,10 +83,10 @@ object GradleCatalogUtils {
             }
         }
 
-        var output = ""
-        dependenciesOutput.forEach { output += it + '\n' }
+        val outputBuilder = StringBuilder()
+        dependenciesOutput.forEach { outputBuilder.append(it + '\n') }
 
-        return output
+        return outputBuilder.toString()
     }
 
     fun convertPlugins(inputString: String): String {
@@ -121,9 +121,10 @@ object GradleCatalogUtils {
             }
         }
 
-        var output = ""
-        pluginsOutput.forEach { output += it + '\n' }
+        val outputBuilder = StringBuilder()
+        pluginsOutput.forEach { outputBuilder.append(it + '\n') }
+        outputBuilder.append("\n/* Add the following line to top of root level build.gradle.kts to prevent errors:\n@Suppress(\"DSL_SCOPE_VIOLATION\")\n/*")
 
-        return output
+        return outputBuilder.toString()
     }
 }

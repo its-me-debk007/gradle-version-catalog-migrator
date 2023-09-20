@@ -4,21 +4,15 @@
 
 # Gradle Version Catalog Migrator
 
-Experience seamless Gradle Version Catalog migration across Windows, macOS, and Linux with our cross-platform app powered by **Kotlin Multiplatform (KMP)**. Effortlessly manage and update your Gradle dependencies with a single, unified solution designed for compatibility and efficiency across major desktop platforms.
+Experience seamless Gradle Version Catalog migration across Windows, macOS, and Linux with our cross-platform app powered by **Kotlin Multiplatform (KMP)** along with **Compose Multiplatform** in the UI Layer! 
+Effortlessly manage and update your Gradle dependencies with a single, unified solution designed for compatibility and efficiency across major desktop platforms.
 
 ## Preview 👀
 
-- Project fully in `Jetpack Compose`
-- Jetpack Compose Navigation
-- Retrofit *(Fully setup with a working sample api call)*
-- MVVM Architecture
-- Kotlin DSL
-- [Chucker](https://github.com/ChuckerTeam/chucker)
-- Dependency versions managed `Gradle Version Catalog`
-- `Dependabot` *(with a weekly schedule)*
-- `GitHub Actions` for building apk and uploading artifact
-- Glide *(for image loading)*
-
+<p align="center">
+  <img src="media/ss1.png" width="500" height="500" alt="Screenshot 1">
+  <img src="media/ss2.png" width="500" height="500" alt="Screenshot 2">
+</p>
 
 ## How to Build and Run the App
 
