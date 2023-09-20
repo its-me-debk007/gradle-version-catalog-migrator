@@ -64,9 +64,10 @@ fun App() {
 
             Button(
                 onClick = {
-                    outputDependencyText =
+                    if (inputDependencyText.isNotBlank()) outputDependencyText =
                         GradleCatalogUtils.convertDependencies(inputDependencyText.trim())
-                    outputPluginText = GradleCatalogUtils.convertPlugins(inputPluginText.trim())
+                    if (inputPluginText.isNotBlank()) outputPluginText =
+                        GradleCatalogUtils.convertPlugins(inputPluginText.trim())
 
                     GradleCatalogUtils.setupToml()
                 },
@@ -136,7 +137,8 @@ private fun WindowScope.AppWindowTitleBar(state: WindowState, onClose: () -> Uni
             imageVector = Icons.Rounded.KeyboardArrowDown,
             contentDescription = MINIMISE,
             tint = Color.White,
-            modifier = Modifier.clickable { state.isMinimized = true }.padding(end = 32.dp))
+            modifier = Modifier.clickable { state.isMinimized = true }.padding(end = 32.dp)
+        )
 
         Icon(
             imageVector = Icons.Rounded.Close,
