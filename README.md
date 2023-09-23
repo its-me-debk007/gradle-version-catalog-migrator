@@ -6,10 +6,8 @@
 
 # Gradle Version Catalog Migrator
 
-Experience seamless Gradle Version Catalog migration across Windows, macOS, and Linux with our cross-platform app
-powered by **Kotlin Multiplatform (KMP)** along with **Compose Multiplatform** in the UI Layer!
-Effortlessly manage and update your Gradle dependencies with a single, unified solution designed for compatibility and
-efficiency across major desktop platforms.
+Experience seamless Gradle Version Catalog migration across all types of desktop powered by **Compose for Desktop**!
+Effortlessly manage and update your Gradle dependencies with a single, unified solution designed for compatibility and efficiency across major desktop platforms.
 
 ## Working 💻
 
