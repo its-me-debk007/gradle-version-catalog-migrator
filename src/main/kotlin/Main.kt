@@ -1,40 +1,43 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.*
-import component.CopyButton
-import component.CustomTextField
-import theme.Background
-import theme.PurpleBlue
-import util.APP_NAME
-import util.CLOSE
-import util.MINIMISE
+import component.*
+import theme.*
+import util.*
 
 @Composable
 @Preview
 fun App() {
-    var inputDependencyText by remember { mutableStateOf("") }
+    var inputDependencyText by remember {
+        mutableStateOf(
+            "implementation(\"androidx.core:core-ktx:1.9.0\")\n" +
+                    "    implementation(\"androidx.appcompat:appcompat:1.6.1\")\n" +
+                    "    implementation(\"com.google.android.material:material:1.9.0\")\n" +
+                    "    implementation(\"androidx.constraintlayout:constraintlayout:2.1.4\")"
+        )
+    }
     var outputDependencyText by remember { mutableStateOf("") }
-    var inputPluginText by remember { mutableStateOf("") }
+    var inputPluginText by remember {
+        mutableStateOf(
+            "id(\"com.android.application\") version \"8.1.1\" apply false\n" +
+                    "    id(\"org.jetbrains.kotlin.android\") version \"1.9.0\" apply false"
+        )
+    }
     var outputPluginText by remember { mutableStateOf("") }
 
     MaterialTheme(
@@ -65,11 +68,11 @@ fun App() {
             Button(
                 onClick = {
                     if (inputDependencyText.isNotBlank()) outputDependencyText =
-                        GradleCatalogUtils.convertDependencies(inputDependencyText.trim())
+                        convertDependencies(inputDependencyText.trim())
                     if (inputPluginText.isNotBlank()) outputPluginText =
-                        GradleCatalogUtils.convertPlugins(inputPluginText.trim())
+                        convertPlugins(inputPluginText.trim())
 
-                    GradleCatalogUtils.setupToml()
+                    setupToml()
                 },
                 colors = ButtonDefaults.buttonColors(disabledBackgroundColor = Color.DarkGray),
                 shape = RoundedCornerShape(12.dp),
@@ -110,43 +113,44 @@ fun App() {
 }
 
 @Composable
-private fun WindowScope.AppWindowTitleBar(state: WindowState, onClose: () -> Unit) = WindowDraggableArea {
-    Box(
-        Modifier.fillMaxWidth()
-            .height(48.dp)
-            .background(Background)
-            .padding(horizontal = 16.dp),
-        contentAlignment = Alignment.CenterEnd
-    ) {
-        TopAppBar(
-            title = {
-                Text(
-                    APP_NAME,
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            },
-            contentColor = Color.White,
-            backgroundColor = PurpleBlue,
-            modifier = Modifier.fillMaxSize().padding(horizontal = 160.dp)
-                .clip(RoundedCornerShape(bottomStart = 100.dp, bottomEnd = 100.dp))
-        )
+private fun WindowScope.AppWindowTitleBar(state: WindowState, onClose: () -> Unit) =
+    WindowDraggableArea {
+        Box(
+            Modifier.fillMaxWidth()
+                .height(48.dp)
+                .background(Background)
+                .padding(horizontal = 16.dp),
+            contentAlignment = Alignment.CenterEnd
+        ) {
+            TopAppBar(
+                title = {
+                    Text(
+                        APP_NAME,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                },
+                contentColor = Color.White,
+                backgroundColor = PurpleBlue,
+                modifier = Modifier.fillMaxSize().padding(horizontal = 160.dp)
+                    .clip(RoundedCornerShape(bottomStart = 100.dp, bottomEnd = 100.dp))
+            )
 
-        Icon(
-            imageVector = Icons.Rounded.KeyboardArrowDown,
-            contentDescription = MINIMISE,
-            tint = Color.White,
-            modifier = Modifier.clickable { state.isMinimized = true }.padding(end = 32.dp)
-        )
+            Icon(
+                imageVector = Icons.Rounded.KeyboardArrowDown,
+                contentDescription = MINIMISE,
+                tint = Color.White,
+                modifier = Modifier.clickable { state.isMinimized = true }.padding(end = 32.dp)
+            )
 
-        Icon(
-            imageVector = Icons.Rounded.Close,
-            contentDescription = CLOSE,
-            tint = Color.White,
-            modifier = Modifier.clickable { onClose() })
+            Icon(
+                imageVector = Icons.Rounded.Close,
+                contentDescription = CLOSE,
+                tint = Color.White,
+                modifier = Modifier.clickable { onClose() })
+        }
     }
-}
 
 fun main() = application {
     val windowState = WindowState(
