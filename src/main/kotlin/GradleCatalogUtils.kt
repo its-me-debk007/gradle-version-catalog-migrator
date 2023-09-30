@@ -77,24 +77,20 @@ fun convertDependencies(inputString: String): String {
                     lastQuoteIdx + 1
                 )
 
-            dependenciesOutput.add(dependency)
-
+            dependenciesOutput.add(dependency + '\n')
         } catch (e: Exception) {
             println("ERROR: ${e.message}")
             return INVALID_SYNTAX
         }
     }
 
-    val outputBuilder = StringBuilder()
-    dependenciesOutput.forEach { outputBuilder.append(it + '\n') }
-
-    return outputBuilder.toString()
+    return dependenciesOutput.toString()
 }
 
 fun convertPlugins(inputString: String): String {
-    val pluginsOutput = mutableListOf<String>()
     val inputList = inputString.split('\n')
 
+    val pluginsOutput = StringBuilder()
     for (it in inputList) {
         val input = it.trim()
 
@@ -114,18 +110,14 @@ fun convertPlugins(inputString: String): String {
             val version = input.substring(thirdQuoteIdx + 1, lastQuoteIdx)
             versions[formattedName] = version
 
-            val x = "alias(libs.plugins.$realName)" + input.substring(lastQuoteIdx + 1)
-            pluginsOutput.add(x)
+            val pluginLine = "alias(libs.plugins.$realName)" + input.substring(lastQuoteIdx + 1)
 
+            pluginsOutput.append(pluginLine + '\n')
         } catch (e: Exception) {
             println("ERROR: ${e.message}")
             return INVALID_SYNTAX
         }
     }
-
-    val outputBuilder = StringBuilder()
-    pluginsOutput.forEach { outputBuilder.append(it + '\n') }
-    outputBuilder.append(COMMENT)
-
-    return outputBuilder.toString()
+    pluginsOutput.append(COMMENT)
+    return pluginsOutput.toString()
 }
