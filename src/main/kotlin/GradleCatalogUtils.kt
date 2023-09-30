@@ -36,12 +36,9 @@ fun setupToml() {
 }
 
 fun convertDependencies(inputString: String): String {
-    val dependenciesOutput = mutableListOf<String>()
+    val dependenciesOutput = StringBuilder()
     libraries.clear()
-
-    val inputList = inputString.split('\n')
-
-    for (it in inputList) {
+    for (it in  inputString.split('\n')) {
         val input = it.trim()
 
         if (input.isEmpty() || input[0] == '/') continue
@@ -77,7 +74,7 @@ fun convertDependencies(inputString: String): String {
                     lastQuoteIdx + 1
                 )
 
-            dependenciesOutput.add(dependency + '\n')
+            dependenciesOutput.append(dependency + '\n')
         } catch (e: Exception) {
             println("ERROR: ${e.message}")
             return INVALID_SYNTAX
@@ -88,10 +85,8 @@ fun convertDependencies(inputString: String): String {
 }
 
 fun convertPlugins(inputString: String): String {
-    val inputList = inputString.split('\n')
-
     val pluginsOutput = StringBuilder()
-    for (it in inputList) {
+    for (it in inputString.split('\n')) {
         val input = it.trim()
 
         if (input.isEmpty() || input[0] == '/') continue
