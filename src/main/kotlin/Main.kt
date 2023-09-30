@@ -1,20 +1,24 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.*
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.*
 import component.*
 import theme.*
@@ -24,19 +28,11 @@ import util.*
 @Preview
 fun App() {
     var inputDependencyText by remember {
-        mutableStateOf(
-            "implementation(\"androidx.core:core-ktx:1.9.0\")\n" +
-                    "    implementation(\"androidx.appcompat:appcompat:1.6.1\")\n" +
-                    "    implementation(\"com.google.android.material:material:1.9.0\")\n" +
-                    "    implementation(\"androidx.constraintlayout:constraintlayout:2.1.4\")"
-        )
+        mutableStateOf("")
     }
     var outputDependencyText by remember { mutableStateOf("") }
     var inputPluginText by remember {
-        mutableStateOf(
-            "id(\"com.android.application\") version \"8.1.1\" apply false\n" +
-                    "    id(\"org.jetbrains.kotlin.android\") version \"1.9.0\" apply false"
-        )
+        mutableStateOf("")
     }
     var outputPluginText by remember { mutableStateOf("") }
 
@@ -57,50 +53,88 @@ fun App() {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 CustomTextField(
                     inputDependencyText,
-                    "Paste ur dependencies here"
+                    "Paste ur dependencies here",
+                    Modifier.weight(1f, true).padding(8.dp),
                 ) { inputDependencyText = it }
 
-                CustomTextField(inputPluginText, "Paste ur plugins here") {
+                CustomTextField(
+                    inputPluginText, "Paste ur plugins here",
+                    Modifier.weight(1f, true).padding(8.dp)
+                ) {
                     inputPluginText = it
                 }
             }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Button(
+                    onClick = {
+                        if (inputDependencyText.isNotBlank()) outputDependencyText =
+                            convertDependencies(inputDependencyText.trim())
+                        if (inputPluginText.isNotBlank()) outputPluginText =
+                            convertPlugins(inputPluginText.trim())
 
-            Button(
-                onClick = {
-                    if (inputDependencyText.isNotBlank()) outputDependencyText =
-                        convertDependencies(inputDependencyText.trim())
-                    if (inputPluginText.isNotBlank()) outputPluginText =
-                        convertPlugins(inputPluginText.trim())
+                        setupToml()
+                    },
+                    colors = ButtonDefaults.buttonColors(disabledBackgroundColor = Color.DarkGray),
+                    shape = RoundedCornerShape(12.dp),
+                    enabled = inputDependencyText.isNotBlank() || inputPluginText.isNotBlank(),
+                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp)
+                ) {
+                    Text("Convert", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                }
+                Button(
+                    onClick = {
+                        inputDependencyText = """
+                                implementation("androidx.core:core-ktx:1.9.0")
+                                implementation("androidx.appcompat:appcompat:1.6.1")
+                                implementation("com.google.android.material:material:1.9.0")
+                                implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+                        """.trimIndent()
+                        inputPluginText = """
+                                id("com.android.application") version "8.1.1" apply false
+                                id("org.jetbrains.kotlin.android") version "1.9.0" apply false
+                        """.trimIndent()
 
-                    setupToml()
-                },
-                colors = ButtonDefaults.buttonColors(disabledBackgroundColor = Color.DarkGray),
-                shape = RoundedCornerShape(12.dp),
-                enabled = inputDependencyText.isNotBlank() || inputPluginText.isNotBlank(),
-                modifier = Modifier.fillMaxWidth()
-                    .padding(vertical = 16.dp, horizontal = 190.dp)
-            ) {
-                Text("Convert", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+
+                        if (inputDependencyText.isNotBlank()) outputDependencyText =
+                            convertDependencies(inputDependencyText.trim())
+                        if (inputPluginText.isNotBlank()) outputPluginText =
+                            convertPlugins(inputPluginText.trim())
+
+                        setupToml()
+                    },
+                    colors = ButtonDefaults.buttonColors(disabledBackgroundColor = Color.DarkGray),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier
+                        .padding(vertical = 8.dp, horizontal = 8.dp)
+                ) {
+                    Text("Some Example", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                }
             }
 
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
 
-                Box(modifier = Modifier, contentAlignment = Alignment.TopEnd) {
+                Box(
+                    modifier = Modifier.weight(1f, true).padding(horizontal = 8.dp),
+                    contentAlignment = Alignment.TopEnd
+                ) {
                     CustomTextField(
                         outputDependencyText,
                         "Find ur updated dependencies here",
-                        true,
+                        Modifier, true,
                         focusable = false
                     ) { outputDependencyText = it }
 
                     CopyButton(outputDependencyText)
                 }
 
-                Box(modifier = Modifier, contentAlignment = Alignment.TopEnd) {
+                Box(
+                    modifier = Modifier.weight(1f, true).padding(horizontal = 8.dp),
+                    contentAlignment = Alignment.TopEnd
+                ) {
                     CustomTextField(
                         outputPluginText,
                         "Find ur updated plugins here",
-                        true,
+                        Modifier, true,
                         focusable = false
                     ) { outputPluginText = it }
 

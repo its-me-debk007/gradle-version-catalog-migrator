@@ -1,6 +1,7 @@
 package component
 
 import androidx.compose.foundation.layout.*
+
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -20,6 +21,7 @@ import java.awt.datatransfer.StringSelection
 fun CustomTextField(
     text: String,
     placeHolderText: String,
+    modifier: Modifier ,
     readOnly: Boolean = false,
     focusable: Boolean = true,
     onValueChange: (String) -> Unit
@@ -35,7 +37,9 @@ fun CustomTextField(
             backgroundColor = TextFieldBackground
         ),
         readOnly = readOnly,
-        modifier = Modifier.clip(RoundedCornerShape(12.dp)).height(280.dp).width(378.dp)
+        modifier = modifier.fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .height(280.dp)
     )
 }
 
