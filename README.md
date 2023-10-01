@@ -35,7 +35,8 @@ https://github.com/its-me-debk007/gradle-version-catalog-migrator/assets/8160498
 Join us in shaping the future of this project – your contributions are invaluable!
 
 - **Fork the repository** and create a new branch for your feature or bug fix
-- Make your changes and ensure that the code follows the project's coding standards
+- Select an existing issue or create a new one, and request that it be assigned
+- If the issue is assigned, make your changes and ensure that the code follows the project's coding standards
 - Write tests to cover your changes and ensure that existing tests pass
 - Submit a **pull request**, explaining the changes and the problem it addresses
 - A project maintainer will review your pull request, and upon approval, it will be merged into the main branch
