@@ -1,4 +1,4 @@
-name: Build & Publish APK
+name: Build app
 
 on:
   push:
@@ -26,11 +26,11 @@ jobs:
       - name: Make Gradle executable
         run: chmod +x ./gradlew
 
-      - name: Build Debug APK
-        run: ./gradlew assembleDebug
+      - name: Build app
+        run: ./gradlew createReleaseDistributable
 
-      - name: Upload APK
+      - name: Upload app
         uses: actions/upload-artifact@v3
         with:
-          name: app-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: app
+          path: build/compose/binaries/main-release/app/
