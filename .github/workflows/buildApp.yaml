@@ -1,0 +1,43 @@
+name: Build app
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: "oracle"
+          java-version: 17
+
+      - name: Make Gradle executable
+        run: chmod +x ./gradlew
+
+      - name: Build app
+        run: ./gradlew createReleaseDistributable
+
+      - name: Upload app
+        uses: actions/upload-artifact@v3
+        with:
+          name: App ${{ matrix.os }}
+          path: build/compose/binaries/main-release/app/
