@@ -39,5 +39,5 @@ jobs:
       - name: Upload app
         uses: actions/upload-artifact@v3
         with:
-          name: App
+          name: App ${{ matrix.os }}
           path: build/compose/binaries/main-release/app/
