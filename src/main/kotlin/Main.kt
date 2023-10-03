@@ -8,8 +8,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,20 +20,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.*
-import component.CopyButton
-import component.CustomTextField
-import theme.Background
-import theme.PurpleBlue
-import util.APP_NAME
-import util.CLOSE
-import util.MINIMISE
+import component.*
+import theme.*
+import util.*
 
 @Composable
 @Preview
 fun App() {
-    var inputDependencyText by remember { mutableStateOf("") }
+    var inputDependencyText by remember {
+        mutableStateOf("")
+    }
     var outputDependencyText by remember { mutableStateOf("") }
-    var inputPluginText by remember { mutableStateOf("") }
+    var inputPluginText by remember {
+        mutableStateOf("")
+    }
     var outputPluginText by remember { mutableStateOf("") }
 
     MaterialTheme(
@@ -54,50 +53,91 @@ fun App() {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 CustomTextField(
                     inputDependencyText,
-                    "Paste ur dependencies here"
+                    "Paste ur dependencies here",
+                    Modifier.weight(1f, true).padding(8.dp),
                 ) { inputDependencyText = it }
 
-                CustomTextField(inputPluginText, "Paste ur plugins here") {
+                CustomTextField(
+                    inputPluginText, "Paste ur plugins here",
+                    Modifier.weight(1f, true).padding(8.dp)
+                ) {
                     inputPluginText = it
                 }
             }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Button(
+                    onClick = {
+                        if (inputDependencyText.isNotBlank()) outputDependencyText =
+                            convertDependencies(inputDependencyText.trim())
+                        if (inputPluginText.isNotBlank()) outputPluginText =
+                            convertPlugins(inputPluginText.trim())
 
-            Button(
-                onClick = {
-                    if (inputDependencyText.isNotBlank()) outputDependencyText =
-                        GradleCatalogUtils.convertDependencies(inputDependencyText.trim())
-                    if (inputPluginText.isNotBlank()) outputPluginText =
-                        GradleCatalogUtils.convertPlugins(inputPluginText.trim())
+                        setupToml()
+                    },
+                    colors = ButtonDefaults.buttonColors(disabledBackgroundColor = Color.DarkGray),
+                    shape = RoundedCornerShape(12.dp),
+                    enabled = inputDependencyText.isNotBlank() || inputPluginText.isNotBlank(),
+                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp)
+                ) {
+                    Text("Convert", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                }
+                Button(
+                    onClick = {
+                        inputDependencyText = """
+                                implementation("androidx.core:core-ktx:1.9.0")
+                                implementation("androidx.appcompat:appcompat:1.6.1")
+                                implementation("com.google.android.material:material:1.9.0")
+                                implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+                                testImplementation("junit:junit:4.13.2")
+                                androidTestImplementation("androidx.test.ext:junit:1.1.5")
+                                androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+                        """.trimIndent()
+                        inputPluginText = """
+                                id("com.android.application") version "8.1.1" apply false
+                                id("org.jetbrains.kotlin.android") version "1.9.0" apply false
+                        """.trimIndent()
 
-                    GradleCatalogUtils.setupToml()
-                },
-                colors = ButtonDefaults.buttonColors(disabledBackgroundColor = Color.DarkGray),
-                shape = RoundedCornerShape(12.dp),
-                enabled = inputDependencyText.isNotBlank() || inputPluginText.isNotBlank(),
-                modifier = Modifier.fillMaxWidth()
-                    .padding(vertical = 16.dp, horizontal = 190.dp)
-            ) {
-                Text("Convert", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+
+                        if (inputDependencyText.isNotBlank()) outputDependencyText =
+                            convertDependencies(inputDependencyText.trim())
+                        if (inputPluginText.isNotBlank()) outputPluginText =
+                            convertPlugins(inputPluginText.trim())
+
+                        setupToml()
+                    },
+                    colors = ButtonDefaults.buttonColors(disabledBackgroundColor = Color.DarkGray),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier
+                        .padding(vertical = 8.dp, horizontal = 8.dp)
+                ) {
+                    Text("Some Example", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                }
             }
 
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
 
-                Box(modifier = Modifier, contentAlignment = Alignment.TopEnd) {
+                Box(
+                    modifier = Modifier.weight(1f, true).padding(horizontal = 8.dp),
+                    contentAlignment = Alignment.TopEnd
+                ) {
                     CustomTextField(
                         outputDependencyText,
                         "Find ur updated dependencies here",
-                        true,
+                        Modifier, true,
                         focusable = false
                     ) { outputDependencyText = it }
 
                     CopyButton(outputDependencyText)
                 }
 
-                Box(modifier = Modifier, contentAlignment = Alignment.TopEnd) {
+                Box(
+                    modifier = Modifier.weight(1f, true).padding(horizontal = 8.dp),
+                    contentAlignment = Alignment.TopEnd
+                ) {
                     CustomTextField(
                         outputPluginText,
                         "Find ur updated plugins here",
-                        true,
+                        Modifier, true,
                         focusable = false
                     ) { outputPluginText = it }
 
@@ -110,43 +150,44 @@ fun App() {
 }
 
 @Composable
-private fun WindowScope.AppWindowTitleBar(state: WindowState, onClose: () -> Unit) = WindowDraggableArea {
-    Box(
-        Modifier.fillMaxWidth()
-            .height(48.dp)
-            .background(Background)
-            .padding(horizontal = 16.dp),
-        contentAlignment = Alignment.CenterEnd
-    ) {
-        TopAppBar(
-            title = {
-                Text(
-                    APP_NAME,
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            },
-            contentColor = Color.White,
-            backgroundColor = PurpleBlue,
-            modifier = Modifier.fillMaxSize().padding(horizontal = 160.dp)
-                .clip(RoundedCornerShape(bottomStart = 100.dp, bottomEnd = 100.dp))
-        )
+private fun WindowScope.AppWindowTitleBar(state: WindowState, onClose: () -> Unit) =
+    WindowDraggableArea {
+        Box(
+            Modifier.fillMaxWidth()
+                .height(48.dp)
+                .background(Background)
+                .padding(horizontal = 16.dp),
+            contentAlignment = Alignment.CenterEnd
+        ) {
+            TopAppBar(
+                title = {
+                    Text(
+                        APP_NAME,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                },
+                contentColor = Color.White,
+                backgroundColor = PurpleBlue,
+                modifier = Modifier.fillMaxSize().padding(horizontal = 160.dp)
+                    .clip(RoundedCornerShape(bottomStart = 100.dp, bottomEnd = 100.dp))
+            )
 
-        Icon(
-            imageVector = Icons.Rounded.KeyboardArrowDown,
-            contentDescription = MINIMISE,
-            tint = Color.White,
-            modifier = Modifier.clickable { state.isMinimized = true }.padding(end = 32.dp)
-        )
+            Icon(
+                imageVector = Icons.Rounded.KeyboardArrowDown,
+                contentDescription = MINIMISE,
+                tint = Color.White,
+                modifier = Modifier.clickable { state.isMinimized = true }.padding(end = 32.dp)
+            )
 
-        Icon(
-            imageVector = Icons.Rounded.Close,
-            contentDescription = CLOSE,
-            tint = Color.White,
-            modifier = Modifier.clickable { onClose() })
+            Icon(
+                imageVector = Icons.Rounded.Close,
+                contentDescription = CLOSE,
+                tint = Color.White,
+                modifier = Modifier.clickable { onClose() })
+        }
     }
-}
 
 fun main() = application {
     val windowState = WindowState(

@@ -1,130 +1,118 @@
 import util.*
 import java.io.File
 
-object GradleCatalogUtils {
-    private lateinit var file: File
 
-    private val libraries = hashMapOf<String, Pair<String, String>>()
-    private val versions = hashMapOf<String, String>()
-    private val pluginIds = hashMapOf<String, String>()
-    private val pluginsOutput = mutableListOf<String>()
-    private val dependenciesOutput = mutableListOf<String>()
+private val libraries = hashMapOf<String, Pair<String, String>>()
+private val versions = hashMapOf<String, String>()
+private val pluginIds = hashMapOf<String, String>()
 
-    fun setupToml() {
-        File("output").mkdir()
+fun setupToml() {
+    File("output").mkdir()
 
-        file = File("./output/$FILE_NAME")
-        if (!file.exists()) file.createNewFile()
+    val file = File("./output/$FILE_NAME")
+    if (!file.exists()) file.createNewFile()
 
-        file.writeText("$VERSIONS\n")
+    file.writeText("$VERSIONS\n")
 
-        versions.forEach { (name, version) ->
-            val statement = "$name = \"$version\""
-            file.appendText(statement + '\n')
-        }
+    versions.forEach { (name, version) ->
+        val statement = "$name = \"$version\""
+        file.appendText(statement + '\n')
+    }
 
-        file.appendText("\n$LIBRARIES\n")
+    file.appendText("\n$LIBRARIES\n")
 
-        libraries.forEach { (name, groupVersionPair) ->
-            val statement = "$name = { group = \"${groupVersionPair.first}\", name = \"$name\"" +
-                    (if (groupVersionPair.second.isNotEmpty()) ", version.ref = \"${groupVersionPair.second}\" " else "") + "}"
-            file.appendText(statement + '\n')
-        }
+    libraries.forEach { (name, groupVersionPair) ->
+        val statement = "$name = { group = \"${groupVersionPair.first}\", name = \"$name\"" +
+                (if (groupVersionPair.second.isNotEmpty()) ", version.ref = \"${groupVersionPair.second}\" " else "") + "}"
+        file.appendText(statement + '\n')
+    }
 
-        file.appendText("\n$PLUGINS\n")
+    file.appendText("\n$PLUGINS\n")
 
-        pluginIds.forEach { (name, id) ->
-            val statement = "$name = { id = \"$id\", version.ref = \"$name\" }"
-            file.appendText(statement + '\n')
+    pluginIds.forEach { (name, id) ->
+        val statement = "$name = { id = \"$id\", version.ref = \"$name\" }"
+        file.appendText(statement + '\n')
+    }
+}
+
+fun convertDependencies(inputString: String): String {
+    val dependenciesOutput = StringBuilder()
+    libraries.clear()
+    for (it in  inputString.split('\n')) {
+        val input = it.trim()
+
+        if (input.isEmpty() || input[0] == '/') continue
+
+        try {
+            val firstColonIdx = input.indexOf(':')
+            val lastColonIdx = input.lastIndexOf(':')
+            val firstQuoteIdx = input.indexOf('"')
+            val lastQuoteIdx = input.lastIndexOf('"')
+
+            val group = input.substring(firstQuoteIdx + 1, firstColonIdx)
+            var name = if (firstColonIdx != lastColonIdx) input.substring(
+                firstColonIdx + 1,
+                lastColonIdx
+            )
+            else input.substring(firstColonIdx + 1, lastQuoteIdx)
+
+            if (libraries.containsKey(name)) name = "${group.replace('.', '-')}-$name"
+
+            val groupVersionPair = if (firstColonIdx != lastColonIdx) {
+                val formattedGroup = group.replace('.', '-')
+                versions[formattedGroup] =
+                    input.substring(lastColonIdx + 1, input.lastIndexOf('"'))
+
+                group to formattedGroup
+            } else group to ""
+
+            libraries[name] = groupVersionPair
+
+            val dependencyName = name.replace('-', '.')
+            val dependency =
+                input.substring(0, firstQuoteIdx) + "libs." + dependencyName + input.substring(
+                    lastQuoteIdx + 1
+                )
+
+            dependenciesOutput.append(dependency + '\n')
+        } catch (e: Exception) {
+            println("ERROR: ${e.message}")
+            return INVALID_SYNTAX
         }
     }
 
-    fun convertDependencies(inputString: String): String {
-        dependenciesOutput.clear()
-        libraries.clear()
+    return dependenciesOutput.toString()
+}
 
-        val inputList = inputString.split('\n')
+fun convertPlugins(inputString: String): String {
+    val pluginsOutput = StringBuilder()
+    for (it in inputString.split('\n')) {
+        val input = it.trim()
 
-        for (it in inputList) {
-            val input = it.trim()
+        if (input.isEmpty() || input[0] == '/') continue
 
-            if (input.isEmpty() || input[0] == '/') continue
+        try {
+            val firstQuoteIdx = input.indexOf('"')
+            val secondQuoteIdx = input.indexOf('"', firstQuoteIdx + 1)
+            val thirdQuoteIdx = input.indexOf('"', secondQuoteIdx + 1)
+            val lastQuoteIdx = input.indexOf('"', thirdQuoteIdx + 1)
 
-            try {
-                val firstColonIdx = input.indexOf(':')
-                val lastColonIdx = input.lastIndexOf(':')
-                val firstQuoteIdx = input.indexOf('"')
-                val lastQuoteIdx = input.lastIndexOf('"')
+            val realName = input.substring(firstQuoteIdx + 1, secondQuoteIdx)
+            val formattedName = realName.replace('.', '-')
 
-                val group = input.substring(firstQuoteIdx + 1, firstColonIdx)
-                var name = if (firstColonIdx != lastColonIdx) input.substring(firstColonIdx + 1, lastColonIdx)
-                else input.substring(firstColonIdx + 1, lastQuoteIdx)
+            pluginIds[formattedName] = realName
 
-                if (libraries.containsKey(name)) name = "${group.replace('.', '-')}-$name"
+            val version = input.substring(thirdQuoteIdx + 1, lastQuoteIdx)
+            versions[formattedName] = version
 
-                val groupVersionPair = if (firstColonIdx != lastColonIdx) {
-                    val formattedGroup = group.replace('.', '-')
-                    versions[formattedGroup] = input.substring(lastColonIdx + 1, input.lastIndexOf('"'))
+            val pluginLine = "alias(libs.plugins.$realName)" + input.substring(lastQuoteIdx + 1)
 
-                    group to formattedGroup
-                } else group to ""
-
-                libraries[name] = groupVersionPair
-
-                val dependencyName = name.replace('-', '.')
-                val dependency =
-                    input.substring(0, firstQuoteIdx) + "libs." + dependencyName + input.substring(lastQuoteIdx + 1)
-
-                dependenciesOutput.add(dependency)
-
-            } catch (e: Exception) {
-                println("ERROR: ${e.message}")
-                return INVALID_SYNTAX
-            }
+            pluginsOutput.append(pluginLine + '\n')
+        } catch (e: Exception) {
+            println("ERROR: ${e.message}")
+            return INVALID_SYNTAX
         }
-
-        val outputBuilder = StringBuilder()
-        dependenciesOutput.forEach { outputBuilder.append(it + '\n') }
-
-        return outputBuilder.toString()
     }
-
-    fun convertPlugins(inputString: String): String {
-        pluginsOutput.clear()
-        val inputList = inputString.split('\n')
-
-        for (it in inputList) {
-            val input = it.trim()
-
-            if (input.isEmpty() || input[0] == '/') continue
-
-            try {
-                val firstQuoteIdx = input.indexOf('"')
-                val secondQuoteIdx = input.indexOf('"', firstQuoteIdx + 1)
-                val thirdQuoteIdx = input.indexOf('"', secondQuoteIdx + 1)
-                val lastQuoteIdx = input.indexOf('"', thirdQuoteIdx + 1)
-
-                val realName = input.substring(firstQuoteIdx + 1, secondQuoteIdx)
-                val formattedName = realName.replace('.', '-')
-
-                pluginIds[formattedName] = realName
-
-                val version = input.substring(thirdQuoteIdx + 1, lastQuoteIdx)
-                versions[formattedName] = version
-
-                val x = "alias(libs.plugins.$realName)" + input.substring(lastQuoteIdx + 1)
-                pluginsOutput.add(x)
-
-            } catch (e: Exception) {
-                println("ERROR: ${e.message}")
-                return INVALID_SYNTAX
-            }
-        }
-
-        val outputBuilder = StringBuilder()
-        pluginsOutput.forEach { outputBuilder.append(it + '\n') }
-        outputBuilder.append(COMMENT)
-
-        return outputBuilder.toString()
-    }
+    pluginsOutput.append(COMMENT)
+    return pluginsOutput.toString()
 }
